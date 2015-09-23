@@ -89,6 +89,9 @@ We can use Django admin through the browsert at `http://127.0.0.1:8000/admin/`, 
 After this, we can sign in to the admin page above and create a post there for example. See the [django admin docs](https://docs.djangoproject.com/en/1.8/ref/contrib/admin/).
 
 
+### Deployment
+
+
 
 
 
