@@ -8,21 +8,25 @@ to create a simple web application (a blog) using [Django](https://www.djangopro
 
 ### Creating the skeleton
 
-To create some scripts and settings files in this dir.
+To make a pyenv virtualenv and install django:
 
     $ pyenv virtualenv 2.7.9 django
     $ pyenv activate django
     $ pip install django
+
+To start a django project:
+
     $ cd tutorials/djangogirls
     $ django-admin startproject mysite .
-
-And also:
+    
+This creates some scripts and settings files in the `mysite` directory.
+Then:
 
 - change TIME_ZONE in `settings.py`
 - add `STATIC_ROOT = os.path.join(BASE_DIR, 'static')` at the end of `settings.py`
 
 
-To create an sqlite3 database (this is set in `settings.py` ny default):
+To create an sqlite3 database (this is set in `settings.py` by default):
 
     $ python manage.py migrate
 
@@ -75,14 +79,14 @@ Django prepared for us a migration file `blog/migrations/0001_initial.py` that w
 
 ### Django admin
 
-To add, edit and delete posts we've just modeled, we will use Django admin. Register the Post model by replacing `blog/admin.py` by:
+To add, edit and delete posts we've just modeled, we will use Django admin. Register the Post model by replacing the contents of the file `blog/admin.py` by:
 
     from django.contrib import admin
     from .models import Post
     
     admin.site.register(Post)
 
-We can use Django admin through the browsert at `http://127.0.0.1:8000/admin/`, but first we need to create a superuser (it will prompt for username, email address and password (régi szá.)):
+We can use Django admin through the browser at `http://127.0.0.1:8000/admin/`, but first we need to create a superuser (it will prompt for username, email address and password (régi sz.á.)):
 
     python manage.py createsuperuser
 
@@ -168,7 +172,7 @@ Delete all the contents and replace them with something like this:
     from django.core.wsgi import get_wsgi_application
     from whitenoise.django import DjangoWhiteNoise
     application = DjangoWhiteNoise(get_wsgi_application())
-    
+
 Hit Save and then go back to the Web tab.
 We're all done! Hit the big green Reload button and you'll be able to go view your application. You'll find a link to it at the top of the page.
 
