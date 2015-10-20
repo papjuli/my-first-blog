@@ -40,6 +40,8 @@ Then:
 
 # Creating a model
 
+A model is the single, definitive source of data about your data. It contains the essential fields and behaviors of the data you’re storing. Generally, each model maps to a single database table.
+
 ### Add a model to `blog/models.py`:
 
     from django.db import models
@@ -216,6 +218,64 @@ This assigns the view called post_list to the (empty ending) `^$` url and the vi
 Views, like `views.post_list` and `views.post_detail` are functions (defined in `views.py`) that are called when a request comes, with the request as the first parameter and in the case of `views.post_detail`, the part `?P<pk>` in the URL configuration has the result that the post number is also given to the view as a parameter named `pk`.
 
 
+# HTML templates
+
+We put our html templates in the `blog/templates/blog` directory. 
+
+
+# Django ORM and QuerySets
+
+Once you’ve created your data models, Django automatically gives you a database-abstraction API that lets you create, retrieve, update and delete objects. You can try it out in the Django interactive shell:
+
+    $ python manage.py shell
+
+First import the Post and User models:
+
+    >>> from blog.models import Post
+    >>> from django.contrib.auth.models import User
+
+### Some basic queries:
+
+ - `>>> Post.objects.all()` lists all the posts in the database
+ - `>>> me = User.objects.get(username='papjuli')` gets a user
+ - `>>> Post.objects.create(author=me, title='Sample title', text='Test')` creates a new post
+
+We can call a function of a model:
+
+    >>> post = Post.objects.get(title="Sample title")
+    >>> post.publish()
+    
+publishes the post.
+
+### Filter queries
+
+    >>> Post.objects.filter(author=me)
+gets the posts of the user stored in `me`.
+
+    >>> Post.objects.filter(title__contains='title')
+gets all the posts that contain a word 'title' in the title field.
+
+    >>> from django.utils import timezone
+    >>> Post.objects.filter(published_date__lte=timezone.now())
+gets the posts that have published_date set in the past.
+
+### Ordering
+
+`>>> Post.objects.order_by('created_date')`
+
+gets all the posts ordered by the `created_date` field.
+
+`>>> Post.objects.order_by('-created_date')`
+
+`-` for reverse order.
+
+### Chaining queries:
+
+`>>> Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')`
+
+### Closing the interactive shell
+
+`>>> exit()`
 
 
 
