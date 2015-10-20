@@ -1,14 +1,11 @@
-# Django tutorial
-
-I'm following the
+These are the notes of the 
 [Django girls tutorial](http://tutorial.djangogirls.org/en/index.html)
 to create a simple web application (a blog) using [Django](https://www.djangoproject.com/).
 
-## Notes
 
-### Creating the skeleton
+# Creating the skeleton
 
-To make a pyenv virtualenv and install django:
+### To make a pyenv virtualenv and install django:
 
     $ pyenv virtualenv 2.7.9 django
     $ pyenv activate django

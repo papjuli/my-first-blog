@@ -13,3 +13,7 @@ def post_detail(request, pk):
   #post = Post.objects.get(pk=pk)  # would be DoesNotExist error if there is no post with this number
   post = get_object_or_404(Post, pk=pk)
   return render(request, 'blog/post_detail.html', {'post': post})
+
+
+def about_page(request):
+  return render(request, 'blog/about.html')
