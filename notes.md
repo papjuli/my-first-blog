@@ -11,7 +11,7 @@ to create a simple web application (a blog) using [Django](https://www.djangopro
     $ pyenv activate django
     $ pip install django
 
-To start a django project:
+### To start a django project:
 
     $ cd tutorials/djangogirls
     $ django-admin startproject mysite .
@@ -23,24 +23,24 @@ Then:
 - add `STATIC_ROOT = os.path.join(BASE_DIR, 'static')` at the end of `settings.py`
 
 
-To create an sqlite3 database (this is set in `settings.py` by default):
+### To create an sqlite3 database (this is set in `settings.py` by default):
 
     $ python manage.py migrate
 
-To run the server:
+### To run the server:
 
     $ python manage.py runserver
 
-Create an application called 'blog':
+### Create an application called 'blog':
 
     $ python manage.py startapp blog
 
 * Add `'blog'` to `INSTALLED_APPS` in `mysite/settings.py`
 
 
-### Creating a model
+# Creating a model
 
-Add a model to `blog/models.py`:
+### Add a model to `blog/models.py`:
 
     from django.db import models
     from django.utils import timezone
@@ -63,7 +63,7 @@ Add a model to `blog/models.py`:
 * `models.ForeignKey` - this is a link to another model.
 
 
-### Creating tables for models in the database
+# Creating tables for models in the database
 
 To tell django about the new model:
 
@@ -74,9 +74,9 @@ Django prepared for us a migration file `blog/migrations/0001_initial.py` that w
     python manage.py migrate blog
 
 
-### Django admin
+# Django admin
 
-To add, edit and delete posts we've just modeled, we will use Django admin. Register the Post model by replacing the contents of the file `blog/admin.py` by:
+To add, edit and delete posts we've just modeled, we will use Django admin. **Register the Post model** by replacing the contents of the file `blog/admin.py` by:
 
     from django.contrib import admin
     from .models import Post
@@ -90,9 +90,9 @@ We can use Django admin through the browser at `http://127.0.0.1:8000/admin/`, b
 After this, we can sign in to the admin page above and create a post there for example. See the [django admin docs](https://docs.djangoproject.com/en/1.8/ref/contrib/admin/).
 
 
-### Deployment
+# Deployment
 
-#### Publishing as a git repo: 
+## Publishing as a git repo: 
 
 In the `djangogirls` directory
 
@@ -114,34 +114,34 @@ On github, create a repository named `my-first-blog`, and hook them up:
     git remote add origin https://github.com/<your-github-username>/my-first-blog.git
     git push -u origin master
 
-#### Publish the website on PythonAnywhere
+## Publish the website on PythonAnywhere
 
 Sign up to [PythonAnywhere](www.pythonanywhere.com), then `yourusername.pythonanywhere.com` will be yours.
 
 Then open a bash console on PythonAnywhere and clone the git repo:
     git clone https://github.com/<your-github-username>/my-first-blog.git
 
-Create a virtualenv on PythonAnywhere:
+### Create a virtualenv on PythonAnywhere:
 
     $ cd my-first-blog
     $ virtualenv --python=python3.4 myvenv
     $ source myvenv/bin/activate
     (mvenv) $  pip install django whitenoise
 
-Collecting static files:
+### Collecting static files:
 
 Static files are the files that don't regularly change or don't run programming code, such as HTML or CSS files. They work differently on servers compared to on our own computer and we need a tool like "whitenoise" to serve them.
 
     (mvenv) $ python manage.py collectstatic
 
-Creating the database on PythonAnywhere:
+### Creating the database on PythonAnywhere:
 
 Here's another thing that's different between your own computer and the server: it uses a different database. So the user accounts and posts can be different on the server and on your computer. We can initialise the database on the server just like we did the one on your own computer, with migrate and createsuperuser:
 
     (mvenv) $ python manage.py migrate
     (mvenv) $ python manage.py createsuperuser
 
-Publishing our blog as a web app:
+### Publishing our blog as a web app:
 
 Click back to the PythonAnywhere dashboard by clicking on its logo, and go click on the Web tab. Finally, hit Add a new web app.
 After confirming your domain name, choose manual configuration (NB not the "Django" option) in the dialog. Next choose Python 3.4, and click Next to finish the wizard.
@@ -149,7 +149,7 @@ After confirming your domain name, choose manual configuration (NB not the "Djan
 You'll be taken to the PythonAnywhere config screen for your webapp, which is where you'll need to go whenever you want to make changes to the app on the server.
 In the "Virtualenv" section, click the red text that says "Enter the path to a virtualenv", and enter: /home/<your-username>/my-first-blog/myvenv/. Click the blue box with the check mark to save the path before moving on.
 
-Configuring the WSGI file:
+### Configuring the WSGI file:
 
 Django works using the "WSGI protocol", a standard for serving websites using Python, which PythonAnywhere supports. The way we configure PythonAnywhere to recognise our Django blog is by editing a WSGI configuration file.
 
@@ -176,6 +176,46 @@ We're all done! Hit the big green Reload button and you'll be able to go view yo
 You are live!
 
 The default page for your site should say "Welcome to Django", just like it does on your local computer. Try adding /admin/ to the end of the URL, and you'll be taken to the admin site. Log in with the username and password, and you'll see you can add new Posts on the server.
+
+
+# Django urls
+
+In the `mysite/urls.py` file, Django already added the urls for the admin sites by
+
+    url(r'^admin/', include(admin.site.urls)),
+
+It means that for every URL that starts with `admin/` Django will find a corresponding view.
+
+Django uses regex to match urls. Some useful regex patterns:
+
+- `^` for beginning of the text
+- `$` for end of text
+- `\d` for a digit
+- `+` to indicate that the previous item should be repeated at least once
+- `()` to capture part of the pattern
+
+For example the url `http://www.mysite.com/post/12345/` would match the regex `^post/(\d+)/$` (since the beginning of the url is cut off before...).
+
+Add the line 
+    url(r'', include('blog.urls')),
+*after* the admin line to `mysite/urls.py`, and the urls not beginning with admin will be redirected to `blog/urls.py` and resolved there. In `blog/urls.py` we put:
+
+    from django.conf.urls import url
+    from . import views
+    
+    urlpatterns = [
+      url(r'^$', views.post_list, name='post_list'),
+      url(r'^post/(?P<pk>[0-9]+)/$', views.post_detail, name='post_detail'),
+    ]
+
+This assigns the view called post_list to the (empty ending) `^$` url and the view called post_detail to a url like `http://www.mysite.com/post/12345/`.
+
+
+# Django views
+
+Views, like `views.post_list` and `views.post_detail` are functions (defined in `views.py`) that are called when a request comes, with the request as the first parameter and in the case of `views.post_detail`, the part `?P<pk>` in the URL configuration has the result that the post number is also given to the view as a parameter named `pk`.
+
+
 
 
 
