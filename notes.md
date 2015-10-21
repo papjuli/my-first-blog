@@ -215,15 +215,17 @@ This assigns the view called post_list to the (empty ending) `^$` url and the vi
 
 # Django views
 
-Views, like `views.post_list` and `views.post_detail` are functions (defined in `views.py`) that are called when a request comes, with the request as the first parameter and in the case of `views.post_detail`, the part `?P<pk>` in the URL configuration has the result that the post number is also given to the view as a parameter named `pk`.
+Views, like `views.post_list` and `views.post_detail` are functions (defined in `views.py`) that are called when a request comes, with the request as the first parameter and in the case of `views.post_detail`, the part `?P<pk>` in the URL configuration has the result that the post number is also given to the view as a parameter named `pk` (pk stands for primary key).
 
 
 # HTML templates
 
+Templates are used to generate HTMLs dynamically. A template contains the static parts of the desired HTML output as well as some special syntax describing how dynamic content will be inserted. We'll look at the syntax later in the "Django templates" section.
+
 We put our html templates in the `blog/templates/blog` directory. 
 
 
-# Django ORM and QuerySets
+# Django QuerySets
 
 Once you’ve created your data models, Django automatically gives you a database-abstraction API that lets you create, retrieve, update and delete objects. You can try it out in the Django interactive shell:
 
@@ -276,6 +278,77 @@ gets all the posts ordered by the `created_date` field.
 ### Closing the interactive shell
 
 `>>> exit()`
+
+
+# Dynamic data in templates
+
+In the views we want to "fill out" some templates we want, with the data corresponding to some models. Dhango's "render" function can do this for us (see `blog/views.py`):
+
+    def post_list(request):
+      posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+      return render(request, 'blog/post_list.html', {'posts': posts})
+
+In this view, we first get the published posts sorted by `published_date` and handed them to the render function as a variable called `posts`, and also the `blog/post_list.html` template to fill in with the date, title and text of the post. That template in turn imports the `blog/base.html` template in the beginning. (The paths of the template files are relative to the directory `./blog/templates`.)
+
+
+# Django templates
+
+To refer to some data and manipulate it in the html templates, django has built-in template language called *Django template language*. The shortest use (in `blog/templates/blog/post_list.html`) would be like this:
+
+    {{ posts }}
+
+which would put something like this in the html:
+
+    [<Post: My second post>, <Post: My first post>]
+
+A for loop looks like this:
+
+    {% for post in posts %}
+      {{ post }}
+    {% endfor %}
+
+We can access attributes and we can mix HTML and template tags:
+
+    {% for post in posts %}
+      <div>
+        <p>published: {{ post.published_date }}</p>
+        <h1><a href="">{{ post.title }}</a></h1>
+        <p>{{ post.text|linebreaks }}</p>
+      </div>
+    {% endfor %}
+
+The `{{ post.text|linebreaks }}` part means that the text is piped into a *filter*, which converts line-breaks into paragraphs. Some filters take an argument:
+
+    {{ my_date|date:"Y-m-d" }}
+
+The line 
+
+    <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+
+in `post_list.html` means that django makes a url from the pattern named 'post_detail' with the value of `post.pk` as argument `pk`.
+
+See [here](https://docs.djangoproject.com/en/1.8/topics/templates/#the-django-template-language) for more about the django template language syntax and [here](https://docs.djangoproject.com/en/1.8/ref/templates/builtins/#ref-templates-builtins-filters) for a reference of built-in filters.
+
+An interesting thing: if a variable (in {{ }}) resolves to a callable, the template system will call it with no arguments and use its result instead of the callable. I tried this out with a number generator: it counts the number of html requests for both the blog page and the separate post pages together (from the last time the django server was started or updated its imports).
+
+## Template extending
+
+An html template can include another template, this way we don't have to repeat ourselves in every file, if we want a part to be the same, like the head of the page. For example the line 
+
+    {% extends "blog/base.html" %}
+
+includes `blog/base.html` in `blog/post_list.html` in the way that the block defined in `post_list.html` goes where `{% block content %}` is in the `base.html`
+
+
+# CSS
+
+For css, we use [Bootstrap](http://getbootstrap.com/) as a base. It is included in the  `blog/templates/blog/base.html` template.
+
+Our own css files should go in the `blog/static` directory: the django template tag `{% load staticfiles %}` in `base.html` loads them automatically (or actually from any folder called static inside the folder of the app). A certain css file is then included in the html like this (in the head, after the links to the bootstrap css files):
+
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+
+
 
 
 

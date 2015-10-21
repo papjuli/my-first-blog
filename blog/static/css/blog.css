@@ -1,19 +1,24 @@
+/* color scheme from lavishbootstrap.com:
+#EEE6D9, #D5B1A2, #E2AB79, #AF8F8F, #AB6361, #97708A, #583A52 */
+
 h1 a {
-  color: #FCA205;
-  font-family: 'Lobster';
+  color: #EEE6D9; /*#FCA205;*/
+  font-family:   'Ubuntu', "Roboto", "Trebuchet MS", "Helvetica", "sans-serif"; /*'Lobster';*/
 }
 
 h2 a {
-  color: #FCA205;
-  font-family: 'Lobster';
+  color: #EEE6D9; /*#FCA205;*/
+  font-family: 'Ubuntu', "Roboto", "Trebuchet MS", "Helvetica", "sans-serif"; /* 'Lobster';*/
 }
 
+
 body {
-  padding-left: 15px;
+  /*padding-left: 15px;*/
+  background-color: #EEE6D9;
 }
 
 .page-header {
-    background-color: #ff9400;
+    background-color: #97708A; /*#ff9400;*/
     margin-top: 0;
     padding: 20px 20px 20px 40px;
 }
@@ -29,12 +34,13 @@ body {
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Lobster', cursive;
+    font-family: 'Ubuntu', "Roboto", "Trebuchet MS", "Helvetica", "sans-serif"; /*'Lobster', cursive;*/
+    color: #583A52;
 }
 
 .date {
     float: right;
-    color: #828282;
+    color: #AB6361; /*#828282;*/
 }
 
 .save {
@@ -57,6 +63,6 @@ h1, h2, h3, h4 {
 }
 
 .post h1 a, .post h1 a:visited {
-    color: #000000;
+    color: #583A52; /*#000000;*/
 }
 
