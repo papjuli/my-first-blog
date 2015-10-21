@@ -1,14 +1,25 @@
+import sys
 
 def number_generator_maker():
-    n = -1
-    while True:
-        n += 1
-        yield n
+  n = -1
+  while True:
+    n += 1
+    yield n
 
-numbers = number_generator_maker()
+#numbers = number_generator_maker()
+
+class Numbers(object):
+  def __init__(self):
+    self.gen = number_generator_maker()
+  
+  def next(self):
+    if sys.version_info[0] <= 2:
+      return self.gen.next()
+    else:
+      return self.gen.__next__()
+
 
 if __name__ == "__main__":
-  import sys
   up_to = int(sys.argv[1])
   while True:
     if sys.version_info[0] <= 2:
